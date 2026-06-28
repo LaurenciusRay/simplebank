@@ -6,3 +6,18 @@ WHERE id = $1;
 SELECT * FROM accounts
 ORDER BY id;
 
+-- name: CreateAccount :one
+INSERT INTO accounts (
+  owner, balance, currency
+) VALUES (
+  $1, $2, $3
+)
+RETURNING *;
+
+-- name: UpdateAccount :one
+UPDATE accounts SET balance = $2
+WHERE id = $1
+RETURNING *;
+
+-- name: DeleteAuthor :exec
+DELETE FROM accounts WHERE id = $1;
