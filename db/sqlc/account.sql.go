@@ -37,12 +37,12 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 	return i, err
 }
 
-const deleteAuthor = `-- name: DeleteAuthor :exec
+const deleteAccount = `-- name: DeleteAccount :exec
 DELETE FROM accounts WHERE id = $1
 `
 
-func (q *Queries) DeleteAuthor(ctx context.Context, id int64) error {
-	_, err := q.exec(ctx, q.deleteAuthorStmt, deleteAuthor, id)
+func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
+	_, err := q.exec(ctx, q.deleteAccountStmt, deleteAccount, id)
 	return err
 }
 
@@ -65,12 +65,20 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 }
 
 const listAccounts = `-- name: ListAccounts :many
-SELECT id, owner, balance, currency, created_at FROM accounts
+SELECT id, owner, balance, currency, created_at
+FROM accounts
 ORDER BY id
+LIMIT $1
+OFFSET $2
 `
 
-func (q *Queries) ListAccounts(ctx context.Context) ([]Account, error) {
-	rows, err := q.query(ctx, q.listAccountsStmt, listAccounts)
+type ListAccountsParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error) {
+	rows, err := q.query(ctx, q.listAccountsStmt, listAccounts, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

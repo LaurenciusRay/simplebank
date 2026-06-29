@@ -13,5 +13,8 @@ FROM entries
 WHERE id = $1;
 
 -- name: ListEntries :many
-SELECT * FROM entries
-ORDER BY id;
+SELECT *
+FROM entries
+ORDER BY id
+LIMIT $1
+OFFSET $2;

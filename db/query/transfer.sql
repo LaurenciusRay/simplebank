@@ -13,5 +13,8 @@ SELECT * FROM transfers
 WHERE id = $1;
 
 -- name: ListTransfers :many
-SELECT * FROM transfers
-ORDER BY id;
+SELECT *
+FROM transfers
+ORDER BY id
+LIMIT $1
+OFFSET $2;
